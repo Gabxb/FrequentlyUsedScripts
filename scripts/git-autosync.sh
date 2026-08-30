@@ -86,9 +86,15 @@ fi
 if [[ -n "$(git status --porcelain)" ]]; then
     git add -A
     check_secrets
-    summary="$(git diff --cached --shortstat | sed 's/^ *//')"
-    git commit -q -m "autosync: $(date '+%Y-%m-%d %H:%M:%S')" -m "${summary:-无统计信息}"
-    log INFO "已提交本地变更: ${summary:-无}"
+    # add -A 之后索引可能与 HEAD 无差异(例如只有空目录变动,或索引残留脏状态)。
+    # 此时 git commit 会失败,set -e 会让脚本静默退出且不写日志,必须显式跳过。
+    if git diff --cached --quiet; then
+        log INFO "索引已与 HEAD 一致,无需提交"
+    else
+        summary="$(git diff --cached --shortstat | sed 's/^ *//')"
+        git commit -q -m "autosync: $(date '+%Y-%m-%d %H:%M:%S')" -m "${summary:-无统计信息}"
+        log INFO "已提交本地变更: ${summary:-无}"
+    fi
 fi
 
 # --- 2. 获取远端最新状态 ---
