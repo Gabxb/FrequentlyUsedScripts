@@ -24,7 +24,15 @@ SCRIPTS=(
 )
 
 TMP_DIR=""
-cleanup() { [[ -n "$TMP_DIR" && -d "$TMP_DIR" ]] && rm -rf "$TMP_DIR"; }
+# 注意: EXIT trap 中最后一条命令的退出状态会成为脚本的退出码。
+# 这里必须用 if 而非 `[[ ... ]] && rm`,否则条件不满足时短路返回 1,
+# 会让正常执行的脚本对外报告失败(自动化场景下会被误判为出错)。
+cleanup() {
+    if [[ -n "$TMP_DIR" && -d "$TMP_DIR" ]]; then
+        rm -rf "$TMP_DIR"
+    fi
+    return 0
+}
 trap cleanup EXIT
 
 info()  { printf '\033[36m==>\033[0m %s\n' "$1"; }
