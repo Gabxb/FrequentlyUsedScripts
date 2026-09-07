@@ -60,7 +60,52 @@ val() {
     printf '%s' "${out:-$UNKNOWN}"
 }
 
-# 出口 IP 探测走网络,抖动是常态,超时统一收敛为占位符
+# 从 README 快照区块里回读某表格行的旧值(第二列)。
+# 限定在标记区块内匹配,避免命中标记之外人工维护的同名表格行。
+prev_row() {
+    local label="$1"
+    awk -v begin="$BEGIN_MARK" -v end="$END_MARK" -v label="$label" '
+        index($0, begin) == 1 { inblock = 1; next }
+        index($0, end) == 1   { inblock = 0 }
+        inblock && $0 ~ ("^\\| " label " \\|") {
+            sub("^\\| " label " \\| *", "")
+            sub(" *\\| *$", "")
+            gsub("`", "")
+            print
+            exit
+        }
+    ' "$README"
+}
+
+# 回读上一次的采集时间戳(> 采集时间:**...** 那一行)
+prev_snap_time() {
+    awk -v begin="$BEGIN_MARK" '
+        index($0, begin) == 1 { inblock = 1; next }
+        inblock && /^> 采集时间/ {
+            if (match($0, /\*\*[^*]+\*\*/)) print substr($0, RSTART + 2, RLENGTH - 4)
+            exit
+        }
+    ' "$README"
+}
+
+# 网络与日志类字段采集失败时,保留 README 中上次的有效值。
+# 这类字段网络抖一下就采不到,写占位符等于用坏数据盖掉好数据;
+# 版本号、内核这些本地字段则相反,采不到就该显式暴露,所以不走这个回退。
+# 用法: fallback_prev <变量名> <表格行标签>
+DEGRADED=0
+fallback_prev() {
+    local -n ref="$1"
+    local label="$2" prev
+    [[ "$ref" == "$UNKNOWN" ]] || return 0
+    DEGRADED=1
+    prev="$(prev_row "$label")"
+    if [[ -n "$prev" && "$prev" != "$UNKNOWN" ]]; then
+        ref="$prev"
+        log WARN "$label 采集失败,保留上次值: $prev"
+    else
+        log WARN "$label 采集失败,且无上次值可用"
+    fi
+}
 
 mkdir -p "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
@@ -128,6 +173,21 @@ else
 fi
 
 last_sync="$(val 'grep -E "\[(INFO |WARN |ERROR)" '"$SYNC_LOG"' | tail -1')"
+
+# ---------- 降级处理 ----------
+# 网络类与日志类字段失败时回退到上次值,并标记本轮为降级采集
+fallback_prev ip_abroad '境外出口'
+fallback_prev ip_cn '境内出口'
+fallback_prev last_sync '最近同步'
+
+# 出口探测失败时时间戳也保留原值,否则会呈现"时间是新的、数据是旧的"误导
+if (( DEGRADED )); then
+    prev_time="$(prev_snap_time)"
+    if [[ -n "$prev_time" ]]; then
+        snap_time="$prev_time"
+        log WARN "本轮为降级采集,采集时间保留为 $prev_time"
+    fi
+fi
 
 # ---------- 渲染 ----------
 BODY="$(mktemp)"; TMP_FILES+=("$BODY")
@@ -213,4 +273,8 @@ if cmp -s "$README" "$OUT"; then
 fi
 
 cat "$OUT" >"$README"
-log INFO "已更新快照: 境外 $ip_abroad / 内存可用 $mem_avail / 磁盘 $disk_pct"
+if (( DEGRADED )); then
+    log WARN "已更新快照(降级): 境外 $ip_abroad / 内存可用 $mem_avail / 磁盘 $disk_pct"
+else
+    log INFO "已更新快照: 境外 $ip_abroad / 内存可用 $mem_avail / 磁盘 $disk_pct"
+fi
