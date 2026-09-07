@@ -22,7 +22,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/
 curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh | bash -s -- install-android-env
 ```
 
-可选脚本名:`install-android-env`、`github-ssh-push`、`git-autosync`。
+可选脚本名:`install-android-env`、`github-ssh-push`、`git-autosync`、`update-env-snapshot`。
 
 ### 仅查看可用脚本
 
@@ -50,6 +50,7 @@ bash setup.sh git-autosync # 直接执行
 | `scripts/install-android-env.sh` | APK 编译环境一键安装(JDK 17 + Gradle 8.7 + Android SDK 34) | 是 |
 | `scripts/github-ssh-push.sh` | GitHub SSH 推送环境配置 | 否 |
 | `scripts/git-autosync.sh` | Git 仓库双向自动同步(含双向删除同步) | 否 |
+| `scripts/update-env-snapshot.sh` | 刷新 README 运行环境快照标记区块 | 否 |
 
 ### scripts/git-autosync.sh 同步行为
 
@@ -67,8 +68,10 @@ bash setup.sh git-autosync # 直接执行
 
 ## 运行环境快照
 
-> 采集时间:**2026-09-07 09:01 +08**(Asia/Singapore)<br>
-> 静态快照,不会自动更新。
+标记区块由 `scripts/update-env-snapshot.sh` 每日自动刷新,请勿手工编辑;标记之外的内容为人工维护。
+
+<!-- SNAPSHOT:START -->
+> 采集时间:**2026-09-07 10:23 +08**(Asia/Singapore)
 
 ### 时间与时区
 
@@ -76,7 +79,7 @@ bash setup.sh git-autosync # 直接执行
 | --- | --- |
 | 时区 | Asia/Singapore(UTC+8,`+0800`) |
 | 时区配置 | `/etc/localtime` → `/usr/share/zoneinfo/Asia/Singapore` |
-| 系统运行时长 | 2 天 17 小时 52 分 |
+| 系统运行时长 | 2 天 19 小时 15 分 |
 
 ### 系统
 
@@ -93,8 +96,8 @@ bash setup.sh git-autosync # 直接执行
 | 项目 | 值 |
 | --- | --- |
 | CPU | Intel(R) Xeon(R) Processor × 2 |
-| 内存 | 7.8 GiB(已用 7.4 GiB / 可用 417 MiB) |
-| 磁盘 | 20 GB(已用 3.8 GB,占用 21%) |
+| 内存 | 7.8Gi(已用 7.5Gi / 可用 286Mi) |
+| 磁盘 | 20G(已用 3.8G,占用 21%) |
 
 ### 开发环境
 
@@ -109,9 +112,21 @@ bash setup.sh git-autosync # 直接执行
 | npm | 11.19.1 | 系统默认 |
 | Python | 3.11.2 | 系统默认 |
 | Git | 2.39.5 | 系统默认 |
-| Bash | 5.2.15(1) | `/usr/bin/bash` |
+| Bash | 5.2.15(1)-release | `/usr/bin/bash` |
 
 Gradle 与 Android SDK 的 PATH 由 `/etc/profile.d/android.sh` 注入,只在登录 shell 生效。cron、`bash -c`、CI 等非登录环境下 `gradle`/`adb` 不在 PATH 中,需用绝对路径或先 `source /etc/profile.d/android.sh`。
+
+### 当前出口与同步状态
+
+| 项目 | 值 |
+| --- | --- |
+| 境外出口 | `212.107.29.67` |
+| 境内出口 | `39.106.200.193` |
+| 内网地址 | `192.168.86.77/20`(eth0),网关 `192.168.80.1` |
+| cron 进程 | 运行中 |
+| 最近同步 | 2026-09-07 10:15:05 [INFO ] 已同步,无需操作 |
+
+<!-- SNAPSHOT:END -->
 
 ### 网络出口
 
@@ -160,11 +175,13 @@ curl -fsSL https://cip.cc          # 境内线路
 
 | 项目 | 值 |
 | --- | --- |
-| 定时任务 | `*/15 * * * *`(每 15 分钟) |
-| 日志 | `/var/log/git-autosync.log`(超 1 MB 自动截断后半保留) |
+| 同步任务 | `*/15 * * * *`(每 15 分钟)→ `scripts/git-autosync.sh` |
+| 快照任务 | `9 3 * * *`(每天 03:09)→ `scripts/update-env-snapshot.sh` |
+| 日志 | `/var/log/git-autosync.log`、`/var/log/env-snapshot.log`(均超 1 MB 自动截断后半保留) |
 | SSH 通道 | `ssh.github.com:443`,密钥 `/root/.ssh/id_ed25519_github` |
 | 冲突兜底 | 环境变量 `FORCE_REMOTE_WINS=1` 时云端强制胜出(会丢弃本地未推送提交,默认关闭) |
-| 最近状态 | 2026-09-07 09:00 正常执行,连续多轮「已同步,无需操作」 |
+
+快照任务只重写 README 中 `SNAPSHOT` 标记区块,写完不自行推送,由随后的同步任务带上云端。数据无变化时不改文件,不产生空提交。
 
 本环境无 systemd,cron 不会开机自启,已通过 `/etc/profile.d/cron-autostart.sh` 在登录 shell 时兜底拉起。
 

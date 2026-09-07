@@ -21,6 +21,7 @@ SCRIPTS=(
   "install-android-env|scripts/install-android-env.sh|APK 编译环境一键安装(JDK 17 + Gradle 8.7 + Android SDK 34)|yes"
   "github-ssh-push|scripts/github-ssh-push.sh|GitHub SSH 推送环境配置|no"
   "git-autosync|scripts/git-autosync.sh|Git 仓库双向自动同步(需配合 cron)|no"
+  "update-env-snapshot|scripts/update-env-snapshot.sh|刷新 README 运行环境快照(需配合 cron)|no"
 )
 
 TMP_DIR=""
