@@ -71,7 +71,7 @@ bash setup.sh git-autosync # 直接执行
 标记区块由 `scripts/update-env-snapshot.sh` 每日自动刷新,请勿手工编辑;标记之外的内容为人工维护。
 
 <!-- SNAPSHOT:START -->
-> 采集时间:**2026-09-07 10:23 +08**(Asia/Singapore)
+> 采集时间:**2026-09-07 10:29 +08**(Asia/Singapore)
 
 ### 时间与时区
 
@@ -79,7 +79,7 @@ bash setup.sh git-autosync # 直接执行
 | --- | --- |
 | 时区 | Asia/Singapore(UTC+8,`+0800`) |
 | 时区配置 | `/etc/localtime` → `/usr/share/zoneinfo/Asia/Singapore` |
-| 系统运行时长 | 2 天 19 小时 15 分 |
+| 系统运行时长 | 2 天 19 小时 20 分 |
 
 ### 系统
 
@@ -96,7 +96,7 @@ bash setup.sh git-autosync # 直接执行
 | 项目 | 值 |
 | --- | --- |
 | CPU | Intel(R) Xeon(R) Processor × 2 |
-| 内存 | 7.8Gi(已用 7.5Gi / 可用 286Mi) |
+| 内存 | 7.8Gi(已用 7.5Gi / 可用 253Mi) |
 | 磁盘 | 20G(已用 3.8G,占用 21%) |
 
 ### 开发环境
@@ -120,11 +120,11 @@ Gradle 与 Android SDK 的 PATH 由 `/etc/profile.d/android.sh` 注入,只在登
 
 | 项目 | 值 |
 | --- | --- |
-| 境外出口 | `212.107.29.67` |
+| 境外出口 | `212.107.28.55` |
 | 境内出口 | `39.106.200.193` |
 | 内网地址 | `192.168.86.77/20`(eth0),网关 `192.168.80.1` |
 | cron 进程 | 运行中 |
-| 最近同步 | 2026-09-07 10:15:05 [INFO ] 已同步,无需操作 |
+| 最近同步 | 2026-09-07 10:25:08 [INFO ] 已推送到云端 -> d5396cd |
 
 <!-- SNAPSHOT:END -->
 
