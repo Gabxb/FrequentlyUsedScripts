@@ -67,7 +67,7 @@ bash setup.sh git-autosync # 直接执行
 
 ## 运行环境快照
 
-> 采集时间:**2026-09-05 17:09 +08**(Asia/Singapore)<br>
+> 采集时间:**2026-09-07 09:01 +08**(Asia/Singapore)<br>
 > 静态快照,不会自动更新。
 
 ### 时间与时区
@@ -76,7 +76,7 @@ bash setup.sh git-autosync # 直接执行
 | --- | --- |
 | 时区 | Asia/Singapore(UTC+8,`+0800`) |
 | 时区配置 | `/etc/localtime` → `/usr/share/zoneinfo/Asia/Singapore` |
-| 系统运行时长 | 1 天 2 小时 30 分 |
+| 系统运行时长 | 2 天 17 小时 52 分 |
 
 ### 系统
 
@@ -93,15 +93,15 @@ bash setup.sh git-autosync # 直接执行
 | 项目 | 值 |
 | --- | --- |
 | CPU | Intel(R) Xeon(R) Processor × 2 |
-| 内存 | 7.8 GiB(已用 7.5 GiB / 可用 282 MiB) |
-| 磁盘 | 20 GB(已用 3.6 GB,占用 20%) |
+| 内存 | 7.8 GiB(已用 7.4 GiB / 可用 417 MiB) |
+| 磁盘 | 20 GB(已用 3.8 GB,占用 21%) |
 
 ### 开发环境
 
 | 组件 | 版本 | 路径 |
 | --- | --- | --- |
 | OpenJDK | 17.0.20.1 | 系统默认 |
-| Gradle | 8.7 | `/opt/gradle-8.7` |
+| Gradle | 8.7 | `/opt/gradle-8.7/bin` |
 | Android SDK | build-tools 34.0.0 / platform android-34 | `/opt/android-sdk` |
 | adb | 1.0.41 | `/opt/android-sdk/platform-tools` |
 | Go | 1.25.6 | `/go` |
@@ -111,12 +111,15 @@ bash setup.sh git-autosync # 直接执行
 | Git | 2.39.5 | 系统默认 |
 | Bash | 5.2.15(1) | `/usr/bin/bash` |
 
+Gradle 与 Android SDK 的 PATH 由 `/etc/profile.d/android.sh` 注入,只在登录 shell 生效。cron、`bash -c`、CI 等非登录环境下 `gradle`/`adb` 不在 PATH 中,需用绝对路径或先 `source /etc/profile.d/android.sh`。
+
 ### 网络出口
 
 出口 IP **不固定**。这台机器走多出口轮换的代理链路,访问境内与境外服务经由不同出口,且境外出口会随时间更换——下表为观测记录,不代表当前值。
 
 | 观测时间 | 境外出口 | 归属 |
 | --- | --- | --- |
+| 2026-09-07 09:01 | `188.253.127.227` | 香港 新界 Akari Networks,AS38136,`proxy: true` |
 | 2026-09-05 17:09 | `103.156.242.194` | — |
 | 2026-09-04 22:37 | `45.62.172.81` | 香港 Eons Data,AS138997,`proxy: true` |
 | 2026-09-04 22:37(GitHub 视角) | `212.107.28.55` | 香港 Kirino LLC,AS41378,`proxy: true` |
@@ -161,6 +164,7 @@ curl -fsSL https://cip.cc          # 境内线路
 | 日志 | `/var/log/git-autosync.log`(超 1 MB 自动截断后半保留) |
 | SSH 通道 | `ssh.github.com:443`,密钥 `/root/.ssh/id_ed25519_github` |
 | 冲突兜底 | 环境变量 `FORCE_REMOTE_WINS=1` 时云端强制胜出(会丢弃本地未推送提交,默认关闭) |
+| 最近状态 | 2026-09-07 09:00 正常执行,连续多轮「已同步,无需操作」 |
 
 本环境无 systemd,cron 不会开机自启,已通过 `/etc/profile.d/cron-autostart.sh` 在登录 shell 时兜底拉起。
 
