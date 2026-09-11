@@ -79,7 +79,7 @@ bash setup.sh git-autosync # 直接执行
 | --- | --- |
 | 时区 | Asia/Singapore(UTC+8,`+0800`) |
 | 时区配置 | `/etc/localtime` → `/usr/share/zoneinfo/Asia/Singapore` |
-| 系统运行时长 | 5 天 20 小时 20 分 |
+| 系统运行时长 | 6 天 15 小时 19 分 |
 
 ### 系统
 
@@ -96,7 +96,7 @@ bash setup.sh git-autosync # 直接执行
 | 项目 | 值 |
 | --- | --- |
 | CPU | Intel(R) Xeon(R) Processor × 2 |
-| 内存 | 7.8Gi(已用 7.5Gi / 可用 252Mi) |
+| 内存 | 7.8Gi(已用 7.5Gi / 可用 255Mi) |
 | 磁盘 | 20G(已用 4.1G,占用 22%) |
 
 ### 开发环境
@@ -124,7 +124,7 @@ Gradle 与 Android SDK 的 PATH 由 `/etc/profile.d/android.sh` 注入,只在登
 | 境内出口 | `39.106.200.193` |
 | 内网地址 | `192.168.86.77/20`(eth0),网关 `192.168.80.1` |
 | cron 进程 | 运行中 |
-| 最近同步 | 2026-09-11 03:00:04 [INFO ] 已同步,无需操作 |
+| 最近同步 | 2026-09-12 02:30:01 [ERROR] fetch 失败,检查网络或 SSH 密钥 /root/.ssh/id_ed25519_github |
 
 <!-- SNAPSHOT:END -->
 
