@@ -145,7 +145,15 @@ curl_xai() {
 }
 
 wget_dl() {
-    wget -q --tries=5 --timeout=60 "$@"
+    local url="$1" dest="${2:-}"
+    if [[ -z "$dest" ]]; then
+        dest="/tmp/$(basename "${url%%\?*}")"
+    fi
+    echo "    来源: $url"
+    echo "    保存: $dest"
+    wget --tries=5 --timeout=30 --waitretry=2 --show-progress --progress=bar:force \
+        -c -O "$dest" "$url"
+    echo "    完成: $(du -h "$dest" | awk '{print $1}')"
 }
 
 ensure_wget_unzip() {
@@ -201,13 +209,9 @@ install_gradle() {
         info "Gradle 已安装: $GRADLE_HOME/bin/gradle"
         return 0
     fi
-    info "安装 Gradle 8.7 -> $GRADLE_HOME"
-    (
-        cd /tmp
-        rm -f gradle-8.7-bin.zip
-        wget_dl https://services.gradle.org/distributions/gradle-8.7-bin.zip
-        unzip -qo gradle-8.7-bin.zip -d /opt
-    )
+    info "安装 Gradle 8.7 -> $GRADLE_HOME (约 128MB,下载中请看进度条)"
+    wget_dl https://services.gradle.org/distributions/gradle-8.7-bin.zip /tmp/gradle-8.7-bin.zip
+    unzip -qo /tmp/gradle-8.7-bin.zip -d /opt
     [[ -x "$GRADLE_HOME/bin/gradle" ]] || die "Gradle 安装失败"
     ok "Gradle 8.7 安装完成"
 }
@@ -221,14 +225,10 @@ install_cmdline_tools() {
         return 0
     fi
     info "安装 Android cmdline-tools"
-    (
-        cd /tmp
-        rm -f commandlinetools-linux-11076708_latest.zip
-        wget_dl "$ANDROID_DL/commandlinetools-linux-11076708_latest.zip"
-        unzip -qo commandlinetools-linux-11076708_latest.zip -d "$ANDROID_HOME/cmdline-tools"
-        rm -rf "$ANDROID_HOME/cmdline-tools/latest"
-        mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
-    )
+    wget_dl "$ANDROID_DL/commandlinetools-linux-11076708_latest.zip" /tmp/commandlinetools-linux-11076708_latest.zip
+    unzip -qo /tmp/commandlinetools-linux-11076708_latest.zip -d "$ANDROID_HOME/cmdline-tools"
+    rm -rf "$ANDROID_HOME/cmdline-tools/latest"
+    mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
     ok "cmdline-tools 安装完成"
 }
 
@@ -248,11 +248,8 @@ install_adb() {
         return 0
     fi
     info "安装 platform-tools (adb)"
-    (
-        cd /tmp
-        wget_dl "$ANDROID_DL/platform-tools-latest-linux.zip"
-        unzip -qo platform-tools-latest-linux.zip -d "$ANDROID_HOME"
-    )
+    wget_dl "$ANDROID_DL/platform-tools-latest-linux.zip" /tmp/platform-tools-latest-linux.zip
+    unzip -qo /tmp/platform-tools-latest-linux.zip -d "$ANDROID_HOME"
     [[ -x "$ANDROID_HOME/platform-tools/adb" ]] || die "adb 安装失败"
     ok "adb 安装完成"
 }
@@ -265,15 +262,11 @@ install_build_tools() {
         return 0
     fi
     info "安装 build-tools 34.0.0"
-    (
-        cd /tmp
-        rm -f build-tools_r34-linux.zip
-        wget_dl "$ANDROID_DL/build-tools_r34-linux.zip"
-        rm -rf /tmp/bt "$ANDROID_HOME/build-tools/34.0.0"
-        mkdir -p /tmp/bt "$ANDROID_HOME/build-tools/34.0.0"
-        unzip -qo build-tools_r34-linux.zip -d /tmp/bt
-        cp -a /tmp/bt/android-14/. "$ANDROID_HOME/build-tools/34.0.0/"
-    )
+    wget_dl "$ANDROID_DL/build-tools_r34-linux.zip" /tmp/build-tools_r34-linux.zip
+    rm -rf /tmp/bt "$ANDROID_HOME/build-tools/34.0.0"
+    mkdir -p /tmp/bt "$ANDROID_HOME/build-tools/34.0.0"
+    unzip -qo /tmp/build-tools_r34-linux.zip -d /tmp/bt
+    cp -a /tmp/bt/android-14/. "$ANDROID_HOME/build-tools/34.0.0/"
     ok "build-tools 34.0.0 安装完成"
 }
 
@@ -285,15 +278,11 @@ install_android_platform() {
         return 0
     fi
     info "安装 platform android-34"
-    (
-        cd /tmp
-        rm -f platform-34-ext12_r01.zip
-        wget_dl "$ANDROID_DL/platform-34-ext12_r01.zip"
-        unzip -qo platform-34-ext12_r01.zip -d "$ANDROID_HOME"
-        mkdir -p "$ANDROID_HOME/platforms"
-        rm -rf "$ANDROID_HOME/platforms/android-34"
-        mv "$ANDROID_HOME/android-34-ext12" "$ANDROID_HOME/platforms/android-34"
-    )
+    wget_dl "$ANDROID_DL/platform-34-ext12_r01.zip" /tmp/platform-34-ext12_r01.zip
+    unzip -qo /tmp/platform-34-ext12_r01.zip -d "$ANDROID_HOME"
+    mkdir -p "$ANDROID_HOME/platforms"
+    rm -rf "$ANDROID_HOME/platforms/android-34"
+    mv "$ANDROID_HOME/android-34-ext12" "$ANDROID_HOME/platforms/android-34"
     ok "platform android-34 安装完成"
 }
 
