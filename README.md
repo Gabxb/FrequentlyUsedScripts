@@ -13,32 +13,62 @@
 列出所有脚本,输入序号选择执行:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
 ```
 
 ### 直接运行指定脚本(适合自动化,无需交互)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh | bash -s -- install-android-env
+curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- install-android-env
 ```
 
-可选脚本名:`install-android-env`、`github-ssh-push`、`git-autosync`、`update-env-snapshot`。
+可选脚本名:`install-android-env`、`install-ai-agents`、`github-ssh-push`、`git-autosync`、`update-env-snapshot`、`install-full-env`。
 
 ### 仅查看可用脚本
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh | bash -s -- --list
+curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- --list
 ```
 
 ### 已克隆到本地时
 
 ```bash
-bash setup.sh              # 交互式菜单
-bash setup.sh --list       # 列出脚本
-bash setup.sh git-autosync # 直接执行
+bash scripts/setup.sh              # 交互式菜单
+bash scripts/setup.sh --list       # 列出脚本
+bash scripts/setup.sh git-autosync # 直接执行
 ```
 
-`setup.sh` 下载脚本前会校验 HTTP 状态与 shebang,404 页面或空内容不会被当作脚本执行;标记为需要 root 的脚本在非 root 环境下会提前中止。
+`scripts/setup.sh` 下载脚本前会校验 HTTP 状态与 shebang,404 页面或空内容不会被当作脚本执行;标记为需要 root 的脚本在非 root 环境下会提前中止。各脚本用途见 [`scripts/脚本说明.md`](scripts/脚本说明.md)。
+
+### 本机一键安装(`install-full-env.sh`)
+
+交互菜单:1 / 2 / 3 是大类,进去后再单选某一项;5 装全部项目;6 清系统和软件缓存。需要 root。
+
+```
+1) 基础软件              nano / htop / btop / screen
+2) APK 编译环境          JDK / Gradle / Android SDK 组件
+3) AI CLI                zcf / claude / gemini / codex / grok / cpa
+5) 安装全部项目          1 + 2 + 3(不含清理)
+6) 清理系统垃圾          apt / npm / pip / go / 软件缓存
+0) 退出
+```
+
+```bash
+# 远程直接跑菜单
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
+# 选 install-full-env,或:
+curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- install-full-env
+
+# 已克隆到本地
+bash scripts/install-full-env.sh                 # 主菜单
+bash scripts/install-full-env.sh 3               # 进入 AI CLI 子菜单
+bash scripts/install-full-env.sh claude grok cpa # 只装指定组件
+bash scripts/install-full-env.sh 5               # 安装全部项目
+bash scripts/install-full-env.sh 6               # 清理垃圾与缓存
+bash scripts/install-full-env.sh --force grok    # 强制重装 grok
+```
+
+`cpa` 是 [CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI),不是 npm 同名包。装完需自行登录:`cpa --claude-login` / `--codex-login` / `--login`。grok 安装会绕过本机对 `x.ai` 的 DNS 污染。子菜单里 `a` 装本组全部,`b` 返回上级。
 
 ---
 
@@ -46,11 +76,13 @@ bash setup.sh git-autosync # 直接执行
 
 | 脚本 | 说明 | 需要 root |
 | --- | --- | --- |
-| `setup.sh` | 一键使用入口:菜单选择或按名直接执行下列脚本 | 视所选脚本而定 |
+| `scripts/setup.sh` | 一键使用入口:菜单选择或按名直接执行下列脚本 | 视所选脚本而定 |
 | `scripts/install-android-env.sh` | APK 编译环境一键安装(JDK 17 + Gradle 8.7 + Android SDK 34) | 是 |
+| `scripts/install-ai-agents.sh` | AI Agent CLI 一键安装(Claude Code + Codex + Gemini CLI + zcf) | 是 |
 | `scripts/github-ssh-push.sh` | GitHub SSH 推送环境配置 | 否 |
 | `scripts/git-autosync.sh` | Git 仓库双向自动同步(含双向删除同步) | 否 |
 | `scripts/update-env-snapshot.sh` | 刷新 README 运行环境快照标记区块 | 否 |
+| `scripts/install-full-env.sh` | 交互式一键安装:大类可再单选;5 装全部项目,6 清理垃圾与缓存 | 是 |
 
 ### scripts/git-autosync.sh 同步行为
 

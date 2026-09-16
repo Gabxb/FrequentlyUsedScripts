@@ -4,13 +4,13 @@
 #
 # 用法:
 #   交互式菜单(推荐)
-#     bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
 #
 #   直接运行指定脚本(适合自动化,无需交互)
-#     curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh | bash -s -- install-android-env
+#     curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- install-android-env
 #
 #   仅列出可用脚本
-#     curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/setup.sh | bash -s -- --list
+#     curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- --list
 #
 set -euo pipefail
 
@@ -19,9 +19,11 @@ RAW_BASE="${RAW_BASE:-https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScri
 # 脚本清单,格式: 键|相对路径|说明|是否需要 root
 SCRIPTS=(
   "install-android-env|scripts/install-android-env.sh|APK 编译环境一键安装(JDK 17 + Gradle 8.7 + Android SDK 34)|yes"
+  "install-ai-agents|scripts/install-ai-agents.sh|AI Agent CLI 一键安装(Claude Code + Codex + Gemini CLI + zcf)|yes"
   "github-ssh-push|scripts/github-ssh-push.sh|GitHub SSH 推送环境配置|no"
   "git-autosync|scripts/git-autosync.sh|Git 仓库双向自动同步(需配合 cron)|no"
   "update-env-snapshot|scripts/update-env-snapshot.sh|刷新 README 运行环境快照(需配合 cron)|no"
+  "install-full-env|scripts/install-full-env.sh|交互式一键安装(大类可单选;5全部项目/6清理缓存)|yes"
 )
 
 TMP_DIR=""
@@ -134,7 +136,7 @@ main() {
             list_scripts
             ;;
         -h|--help)
-            sed -n '3,14p' "$0" 2>/dev/null || printf '用法: setup.sh [脚本名|--list|--help]\n'
+            sed -n '3,14p' "$0" 2>/dev/null || printf '用法: scripts/setup.sh [脚本名|--list|--help]\n'
             ;;
         *)
             local item

@@ -2,6 +2,7 @@
 .claude
 .gemini
 .opencode
+.monkeycode/
 
 # IDE and Editors
 **/.idea/
