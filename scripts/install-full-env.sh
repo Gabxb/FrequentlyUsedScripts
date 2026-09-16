@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 #
-# 本机交互式一键安装
+# 本机交互式一键安装  v1.0
+# 入口: scripts/setupV10.sh
+#   bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupV10.sh)
+#
+# 新机引导版见 v1.1: scripts/setupv11.sh
+#
 #   1. 基础软件(可单选): nano / htop / btop / screen
 #   2. APK 编译环境(可单选): JDK / Gradle / cmdline-tools / adb / build-tools / platform
 #   3. AI CLI(可单选): zcf / claude / gemini / codex / grok / cpa(CLIProxyAPI)

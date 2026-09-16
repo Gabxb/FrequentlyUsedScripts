@@ -6,6 +6,12 @@
 #   交互式菜单(推荐)
 #     bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
 #
+#   一键安装 v1.0 (分级子菜单)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupV10.sh)
+#
+#   一键安装 v1.1 (新机引导,推荐)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupv11.sh)
+#
 #   直接运行指定脚本(适合自动化,无需交互)
 #     curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- install-android-env
 #
@@ -23,7 +29,9 @@ SCRIPTS=(
   "github-ssh-push|scripts/github-ssh-push.sh|GitHub SSH 推送环境配置|no"
   "git-autosync|scripts/git-autosync.sh|Git 仓库双向自动同步(需配合 cron)|no"
   "update-env-snapshot|scripts/update-env-snapshot.sh|刷新 README 运行环境快照(需配合 cron)|no"
-  "install-full-env|scripts/install-full-env.sh|交互式一键安装(大类可单选;5全部项目/6清理缓存)|yes"
+  "install-full-env|scripts/install-full-env.sh|交互式一键安装 v1.0(分级子菜单)|yes"
+  "setupV10|scripts/setupV10.sh|一键安装入口 v1.0|yes"
+  "setupv11|scripts/setupv11.sh|新机安装引导 v1.1(方案+勾选+进度)|yes"
 )
 
 TMP_DIR=""

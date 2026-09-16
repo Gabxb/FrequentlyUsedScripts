@@ -8,9 +8,28 @@
 
 ## 快速开始
 
-### 交互式菜单(推荐)
+v1.0 与 v1.1 **并存**,按入口选版本。新机推荐 v1.1。
 
-列出所有脚本,输入序号选择执行:
+```bash
+# v1.0  分级子菜单,可进组后再单装
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupV10.sh)
+
+# v1.1  新机引导:预检 → 选方案 → 勾选 → 确认 → 带总进度执行
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupv11.sh)
+```
+
+已克隆到本地时:
+
+```bash
+bash scripts/setupV10.sh
+bash scripts/setupv11.sh
+bash scripts/setupv11.sh --yes --profile new
+bash scripts/setupv11.sh --items nano,htop,claude,grok
+```
+
+### 脚本目录菜单
+
+列出仓库内其它运维脚本,输入序号选择执行:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
@@ -40,7 +59,7 @@ bash scripts/setup.sh git-autosync # 直接执行
 
 `scripts/setup.sh` 下载脚本前会校验 HTTP 状态与 shebang,404 页面或空内容不会被当作脚本执行;标记为需要 root 的脚本在非 root 环境下会提前中止。各脚本用途见 [`scripts/脚本说明.md`](scripts/脚本说明.md)。
 
-### 本机一键安装(`install-full-env.sh`)
+### 本机一键安装 v1.0 (`setupV10.sh` → `install-full-env.sh`)
 
 交互菜单:1 / 2 / 3 是大类,进去后再单选某一项;5 装全部项目;6 清系统和软件缓存。需要 root。
 
@@ -54,10 +73,8 @@ bash scripts/setup.sh git-autosync # 直接执行
 ```
 
 ```bash
-# 远程直接跑菜单
-bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh)
-# 选 install-full-env,或:
-curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setup.sh | bash -s -- install-full-env
+# 远程直接跑 v1.0
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupV10.sh)
 
 # 已克隆到本地
 bash scripts/install-full-env.sh                 # 主菜单
@@ -69,6 +86,19 @@ bash scripts/install-full-env.sh --force grok    # 强制重装 grok
 ```
 
 `cpa` 是 [CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI),不是 npm 同名包。装完需自行登录:`cpa --claude-login` / `--codex-login` / `--login`。grok 安装会绕过本机对 `x.ai` 的 DNS 污染。子菜单里 `a` 装本组全部,`b` 返回上级。
+
+### 新机安装引导 v1.1 (`setupv11.sh`)
+
+流程:机器预检 → 选方案(新机/基础/APK/AI/自定义/清理) → 自定义可逐项开关 → 列出清单确认 → `[n/N]` 总进度 + wget 进度条。失败项记入摘要,不中断整轮。
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/Gabxb/FrequentlyUsedScripts/master/scripts/setupv11.sh)
+bash scripts/setupv11.sh --profile new
+bash scripts/setupv11.sh --yes --profile apk
+bash scripts/setupv11.sh --items nano,jdk,gradle,claude,cpa
+```
+
+方案 `new` 不含清理。清理单独选方案 6 或 `--profile clean`。日志默认 `/tmp/setupv11.log`。
 
 ---
 
@@ -82,7 +112,9 @@ bash scripts/install-full-env.sh --force grok    # 强制重装 grok
 | `scripts/github-ssh-push.sh` | GitHub SSH 推送环境配置 | 否 |
 | `scripts/git-autosync.sh` | Git 仓库双向自动同步(含双向删除同步) | 否 |
 | `scripts/update-env-snapshot.sh` | 刷新 README 运行环境快照标记区块 | 否 |
-| `scripts/install-full-env.sh` | 交互式一键安装:大类可再单选;5 装全部项目,6 清理垃圾与缓存 | 是 |
+| `scripts/install-full-env.sh` | 交互式一键安装 v1.0:大类可再单选;5 装全部项目,6 清理 | 是 |
+| `scripts/setupV10.sh` | v1.0 入口,启动 `install-full-env.sh` | 是 |
+| `scripts/setupv11.sh` | v1.1 新机引导:方案 + 勾选 + 总进度 + 下载进度条 | 是 |
 
 ### scripts/git-autosync.sh 同步行为
 
